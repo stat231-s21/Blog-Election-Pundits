@@ -15,9 +15,25 @@ for file_name in speech_file_names:
     with open(file_name) as f:
         text = f.read()
     
-    extracted = [] # a list of chars
-    # iterate over the text and extract stuff
-    for i in range(len(text)):
-        if substr_at(text, "Biden: (", i):
-            # extract the text
-            while 
+    extracted_text = []
+    i = 0
+    while i < len(text):
+        if substr_at(text, ": (", i):
+            # remove name of speaker back to previous period
+            while len(extracted_text) != 0 and extracted_text[-1] != ".":
+                extracted_text.pop()
+
+            # increment i
+            i += 3
+            while text[i] != ")":
+                i += 1
+            i += 1
+
+        else:
+            extracted_text.append(text[i])
+            i += 1
+
+    extracted_text = ''.join(extracted_text)
+    
+    with open(file_name, 'w') as f:
+        f.write(extracted_text)
