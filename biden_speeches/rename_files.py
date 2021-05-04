@@ -13,5 +13,7 @@ for file_name in file_names:
     year = parts[2].split(".")[0]
     year_abbr = year[2:]
     day = parts[1][:-1]
+    if len(day) == 1:
+        day = "0" + day
     new_name = month_num + "-" + day + "-" + year_abbr + ".txt"
     os.rename(file_name, new_name)
