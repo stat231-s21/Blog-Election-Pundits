@@ -11,6 +11,10 @@ knitr::opts_chunk$set(echo = TRUE)
 library(readr)
 library(tidyverse)
 library(dplyr)
+library(janitor)
+library(tidytext)
+library(wordcloud)
+library(textdata)
 ```
 
 ```{r}
@@ -36,6 +40,29 @@ for(j in 1:119){
   all_trump <- bind_rows(all_trump, Trump_j)
 }
 ```
+
+```{r}
+biden_words <- all_biden %>%
+  unnest_tokens(output = word, input = X1)
+```
+
+```{r}
+biden_words2 <- biden_words %>%
+  anti_join(stop_words, by = "word")
+```
+
+```{r}
+trump_words <- all_trump %>%
+  unnest_tokens(output = word, input = X1)
+```
+
+```{r}
+trump_words2 <- trump_words %>%
+  anti_join(stop_words, by = "word")
+```
+
+
+
 
 
 
