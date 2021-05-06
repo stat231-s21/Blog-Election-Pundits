@@ -1,0 +1,46 @@
+---
+title: "LineGraphWrangling"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(readr)
+library(tidyverse)
+library(dplyr)
+```
+
+```{r}
+bidenvector <- (list.files(path = "biden_speeches"))[1:167]
+```
+
+```{r}
+all_biden <- data.frame()
+for(i in 1:167){
+  Biden_i <- read_tsv(paste0("biden_speeches/", bidenvector[i]), col_names = FALSE)
+  all_biden <- bind_rows(all_biden, Biden_i)
+}
+```
+
+```{r}
+trumpvector <- (list.files(path = "trump_speeches"))
+```
+
+```{r}
+all_trump <- data.frame()
+for(j in 1:119){
+  Trump_j <- read_tsv(paste0("trump_speeches/", trumpvector[j]), col_names = FALSE)
+  all_trump <- bind_rows(all_trump, Trump_j)
+}
+```
+
+
+
+
+
+
+
+
