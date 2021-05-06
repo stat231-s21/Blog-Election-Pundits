@@ -18,46 +18,46 @@ library(textdata)
 ```
 
 ```{r}
-bidenvector <- (list.files(path = "biden_speeches"))[1:167]
+biden_linegraph_vector <- (list.files(path = "biden_speeches"))[1:167]
 ```
 
 ```{r}
-all_biden <- data.frame()
+all_biden_linegraph <- data.frame()
 for(i in 1:167){
-  Biden_i <- read_tsv(paste0("biden_speeches/", bidenvector[i]), col_names = FALSE)
-  all_biden <- bind_rows(all_biden, Biden_i)
+  Biden_i <- read_tsv(paste0("biden_speeches/", biden_linegraph_vector[i]), col_names = FALSE)
+  all_biden_linegraph <- bind_rows(all_biden_linegraph, Biden_i)
 }
 ```
 
 ```{r}
-trumpvector <- (list.files(path = "trump_speeches"))
+trump_linegraph_vector <- (list.files(path = "trump_speeches"))
 ```
 
 ```{r}
-all_trump <- data.frame()
+all_trump_linegraph <- data.frame()
 for(j in 1:119){
-  Trump_j <- read_tsv(paste0("trump_speeches/", trumpvector[j]), col_names = FALSE)
-  all_trump <- bind_rows(all_trump, Trump_j)
+  Trump_j <- read_tsv(paste0("trump_speeches/", trump_linegraph_vector[j]), col_names = FALSE)
+  all_trump_linegraph <- bind_rows(all_trump_linegraph, Trump_j)
 }
 ```
 
 ```{r}
-biden_words <- all_biden %>%
+biden_linegraph_words <- all_biden_linegraph %>%
   unnest_tokens(output = word, input = X1)
 ```
 
 ```{r}
-biden_words2 <- biden_words %>%
+biden_linegraph_words2 <- biden_linegraph_words %>%
   anti_join(stop_words, by = "word")
 ```
 
 ```{r}
-trump_words <- all_trump %>%
+trump_linegraph_words <- all_trump_linegraph %>%
   unnest_tokens(output = word, input = X1)
 ```
 
 ```{r}
-trump_words2 <- trump_words %>%
+trump_linegraph_words2 <- trump_linegraph_words %>%
   anti_join(stop_words, by = "word")
 ```
 
