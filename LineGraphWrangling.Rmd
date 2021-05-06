@@ -61,6 +61,16 @@ trump_linegraph_words2 <- trump_linegraph_words %>%
   anti_join(stop_words, by = "word")
 ```
 
+```{r}
+biden_linegraph_words2 <- biden_linegraph_words2 %>%
+  count(word, sort = TRUE)
+```
+
+```{r}
+trump_linegraph_words2 <- trump_linegraph_words2 %>%
+  count(word, sort = TRUE)
+```
+
 
 
 
