@@ -24,7 +24,8 @@ biden_linegraph_vector <- (list.files(path = "biden_speeches"))[1:167]
 ```{r}
 all_biden_linegraph <- data.frame()
 for(i in 1:167){
-  Biden_i <- read_tsv(paste0("biden_speeches/", biden_linegraph_vector[i]), col_names = FALSE)
+  Biden_i <- read_tsv(paste0("biden_speeches/", biden_linegraph_vector[i]), col_names = FALSE) %>%
+    mutate(file = biden_linegraph_vector[i])
   all_biden_linegraph <- bind_rows(all_biden_linegraph, Biden_i)
 }
 ```
@@ -36,7 +37,8 @@ trump_linegraph_vector <- (list.files(path = "trump_speeches"))
 ```{r}
 all_trump_linegraph <- data.frame()
 for(j in 1:119){
-  Trump_j <- read_tsv(paste0("trump_speeches/", trump_linegraph_vector[j]), col_names = FALSE)
+  Trump_j <- read_tsv(paste0("trump_speeches/", trump_linegraph_vector[j]), col_names = FALSE) %>%
+    mutate(file = trump_linegraph_vector[j])
   all_trump_linegraph <- bind_rows(all_trump_linegraph, Trump_j)
 }
 ```
@@ -62,12 +64,12 @@ trump_linegraph_words2 <- trump_linegraph_words %>%
 ```
 
 ```{r}
-biden_linegraph_words2 <- biden_linegraph_words2 %>%
+biden_linegraph_words3 <- biden_linegraph_words2 %>%
   count(word, sort = TRUE)
 ```
 
 ```{r}
-trump_linegraph_words2 <- trump_linegraph_words2 %>%
+trump_linegraph_words3 <- trump_linegraph_words2 %>%
   count(word, sort = TRUE)
 ```
 
