@@ -83,7 +83,13 @@ final_trump_linegraph <- data.frame()
 final_trump_linegraph <- right_join(trump_linegraph_words2, trump_linegraph_words3, by = "word")
 ```
 
+```{r}
+final_biden_linegraph$file <- gsub(".txt", "", final_biden_linegraph$file)
+```
 
+```{r}
+final_trump_linegraph$file <- gsub(".txt", "", final_trump_linegraph$file)
+```
 
 
 
