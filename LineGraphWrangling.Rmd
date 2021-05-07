@@ -73,6 +73,20 @@ trump_linegraph_words3 <- trump_linegraph_words2 %>%
   count(word, sort = TRUE)
 ```
 
+```{r}
+final_biden_linegraph <- data.frame()
+final_biden_linegraph <- right_join(biden_linegraph_words2, biden_linegraph_words3, by = "word")
+```
+
+```{r}
+final_trump_linegraph <- data.frame()
+final_trump_linegraph <- right_join(trump_linegraph_words2, trump_linegraph_words3, by = "word")
+```
+
+
+
+
+
 
 
 
