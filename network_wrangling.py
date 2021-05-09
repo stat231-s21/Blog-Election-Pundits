@@ -9,7 +9,7 @@ from collections import defaultdict
 with open('stopwords.txt') as f:
     stopwords = set(f.read().splitlines())
 
-dist = 15
+dist = 10
 num_words_considered = 40
 
 output_files = ["biden_speeches", "trump_speeches"]
@@ -33,17 +33,14 @@ for output_file in output_files:
         words = text.split(" ")
         for word in words:
             word = word.lower()
-            if word not in stopwords:
+            if word not in stopwords and word != '':
                 word_frequencies[word] += 1
 
     frequencies = [(num, word) for word, num in word_frequencies.items()]
     frequencies.sort()
     frequencies.reverse()
     
-    top_words = [word for num, word in frequencies[:num_words_considered]]
-
-    print(top_words)
-        
+    top_words = set([word for num, word in frequencies[:num_words_considered]])
 
     for input_file in input_files:
         with open(input_file) as f:
@@ -55,12 +52,14 @@ for output_file in output_files:
         words = text.split(" ")
         for i in range(len(words)):
             word = words[i].lower()
+            if word not in top_words:
+                continue
             
             # acquire nearby words
             nearby_words = []
             for j in range(i - dist, i + dist + 1): # check all j within `dist` of word
                 if j >= 0 and j < len(words) and j != i: # if j is a valid index
-                    if words[j] not in stopwords:
+                    if words[j] in top_words and words[j] != word:
                         nearby_words.append(words[j])
 
             # increase weights accordingly
@@ -69,6 +68,14 @@ for output_file in output_files:
                 to_hash = frozenset([word, nearby_word])
                 output_dictionary[to_hash] += 1
 
-        
+    for pair_set in output_dictionary.keys():
+        pair_list = list(pair_set)
+        weight = output_dictionary[pair_set]
+        output.append(pair_list[0] + ',' + pair_list[1] + ',' + str(weight))
+
+    output = '\n'.join(output)
 
     os.chdir("..")
+
+    with open(output_file + "_network_data.csv", 'w') as f:
+        f.write(output)
