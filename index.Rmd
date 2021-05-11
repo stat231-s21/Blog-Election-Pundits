@@ -1,7 +1,7 @@
 ---
-title: "Your Project Title Here"
-author: "Your Names Here"
-date: "Add a date"
+title: "Text Analysis of Biden and Trump Speeches During the 2020 Presidential Election"
+author: "Conrad Kuklinsky, Jett Knight, Lovemore Nyaumwe"
+date: "5/11/21"
 output:
   rmdformats::readthedown:
     thumbnails: false
@@ -11,58 +11,51 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, fig.align="center")
 library(tidyverse)
+library(ggnetwork)
+library(igraph)
 ```
 
-# Header 1
+# Network Visualizations
 
-## Header 2
+Biden:
 
-### Header 3
+```{r, echo=FALSE}
+biden_network_data <- read_csv("biden_speeches_network_data.csv") %>%
+  arrange(desc(weight)) %>%
+  top_n(50)
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For example, you can include **Bold** and _Italic_ and `Code` text.  For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+biden_network <- graph_from_data_frame(biden_network_data, directed = FALSE)
 
-You should test out updating your GitHub Pages website:
+V(biden_network)$degree <- igraph::degree(biden_network)
+V(biden_network)$wtdegree <- strength(biden_network, weights=E(biden_network)$Weight)
 
-- clone your group's blog project repo in RStudio
-- update "Your Project Title Here" to a new title in the YAML header
-- knit `index.Rmd` 
-- commit and push BOTH the `index.Rmd` and the `index.html` files
-- go to https://stat231-s21.github.io/Blog-Election-Pundits/ to see the published test document (this is publicly available!)
+stats <- data_frame(name = V(biden_network)$name,
+                   degree = V(biden_network)$degree,
+                   wtdegree = V(biden_network)$wtdegree )
 
-## Including code and plots
+stats <- stats %>%
+  mutate(eigen = eigen_centrality(biden_network, directed = FALSE, 
+                                 weights = NA)$vector, 
+         page.rank = page_rank(biden_network, directed = FALSE, weights = NA)$vector
+         )
 
-You can embed code as normal, for example:
-
-```{r cars}
-summary(cars)
+ggplot(data = ggnetwork(biden_network)
+       , aes(x = x, y = y, xend = xend, yend = yend)) +
+  geom_edges(arrow=arrow(type="closed", length=unit(6,"pt"))
+            , aes(color = weight),
+            size = 2) +
+  geom_nodes() +
+  geom_nodelabel(aes(label = name)) +
+  theme_blank() +
+  ggtitle("Common Biden Speech Words") + 
+  labs(size = "Weight") +
+  scale_color_continuous(type = "viridis")
 ```
 
-Let's clean up the format of that output:
-
-```{r pretty, echo=FALSE, warning=FALSE, message=FALSE}
-library(kableExtra)
-summary(cars) %>%
-  kable(col.names = c("Speed", "Distance")
-        , row.names = F) %>%
-  kable_styling(bootstrap_options = "striped"
-                , full_width = F) %>%
-  row_spec(0, bold = T, underline = T) %>%
-  column_spec(1:2, width = "1.5in") 
+Trump:
+```{r}
+trump_network_data <- read_csv("trump_speeches_network_data.csv")
 ```
-
-In a study from the 1920s, fifty cars were used to see how the speed of the car and the distance taken to stop were related.  Speeds ranged between `r min(cars$speed)` and `r max(cars$speed)` mph.  Distances taken to stop ranged between `r min(cars$dist)` and `r max(cars$dist)` feet, with the middle 50% falling between `r as.numeric(quantile(cars$dist)[2])` and `r as.numeric(quantile(cars$dist)[4])` feet.  
-
-You can also embed plots as normal, for example:
-
-```{r figure1, echo=FALSE}
-ggplot(data = cars, aes(x = speed, y = dist)) + 
-  geom_point() + 
-  labs(x = "Speed of car (mph)"
-       , y = "Distance taken to stop (ft)"
-       , title = "cars data (1920s)")
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
 
 ## Including links and images
@@ -72,24 +65,4 @@ You can include [Links](https://www.datadreaming.org/post/r-markdown-theme-galle
 You can embed a gif.
 
 ![pugs](https://media.giphy.com/media/XHVmD4RyXgSjd8aUMb/giphy.gif)
-
-
-# You can even create tabs if you want! {.tabset .tabset-fade .tabset-pills}
-
-## Bulleted list
-
-You can make a bulleted list like this:
-
-- item 1
-- item 2
-- item 3
-
-
-## Numbered list
-
-You can make a numbered list like this
-
-1. First thing I want to say
-2. Second thing I want to say
-3. Third thing I want to say
 
