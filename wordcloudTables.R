@@ -6,7 +6,7 @@ library(wordcloud)
 library(textdata)
 
 # Put in your actual path where the text files are saved
-mypath = "~/git/Stat231/Joe Biden speeches"
+mypath = "~/git/Blog-Election-Pundits/trump_speeches"
 setwd(mypath)
 
 # Create list of text files
@@ -17,6 +17,7 @@ txt_files_df <- lapply(txt_files_ls,
                                                text=read_file(x))})
 # Combine them
 speeches_df <- do.call("rbind", lapply(txt_files_df, as.data.frame))
-speeches_df
+write.csv(speeches_df,
+          "~/git/Blog-Election-Pundits/trump_speeches/trump_speeches_wordcloud.csv")
 
 
