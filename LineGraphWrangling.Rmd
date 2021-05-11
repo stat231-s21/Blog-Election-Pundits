@@ -15,6 +15,7 @@ library(janitor)
 library(tidytext)
 library(wordcloud)
 library(textdata)
+library(ggplot2)
 ```
 
 ```{r}
@@ -65,32 +66,27 @@ trump_linegraph_words2 <- trump_linegraph_words %>%
 
 ```{r}
 biden_linegraph_words3 <- biden_linegraph_words2 %>%
-  count(word, sort = TRUE)
+  count(file, word, sort = TRUE)
 ```
 
 ```{r}
 trump_linegraph_words3 <- trump_linegraph_words2 %>%
-  count(word, sort = TRUE)
+  count(file, word, sort = TRUE)
 ```
 
 ```{r}
-final_biden_linegraph <- data.frame()
-final_biden_linegraph <- right_join(biden_linegraph_words2, biden_linegraph_words3, by = "word")
+biden_linegraph_words3$file <- gsub(".txt", "", biden_linegraph_words3$file)
 ```
 
 ```{r}
-final_trump_linegraph <- data.frame()
-final_trump_linegraph <- right_join(trump_linegraph_words2, trump_linegraph_words3, by = "word")
+trump_linegraph_words3$file <- gsub(".txt", "", trump_linegraph_words3$file)
 ```
 
 ```{r}
-final_biden_linegraph$file <- gsub(".txt", "", final_biden_linegraph$file)
+biden_linegraph_words3 %>%
+  filter(word == "children") %>%
+  ggplot(aes(x = as.Date(file, "%m-%d-%y"), y = n)) + geom_line() + geom_point()
 ```
-
-```{r}
-final_trump_linegraph$file <- gsub(".txt", "", final_trump_linegraph$file)
-```
-
 
 
 
