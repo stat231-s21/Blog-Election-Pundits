@@ -33,11 +33,11 @@ stop_words2 <-  dplyr::bind_rows(stop_words, mystopwords) %>%
 word_frequencies <- trump_speeches %>%
   unnest_tokens(output = word, input = text) %>%
   anti_join(stop_words2, by="word") %>%
-  count(word, sort = TRUE) %>%
+  count(word, sort = TRUE) #%>%
   #filter(word != "it's")%>%
-  filter(word != "it’s")
+  #filter(word != "it’s")
 
 wordcloud2(word_frequencies, shape = "star")
 
-word_frequencies %>%
-  filter(word == "it’s")
+#word_frequencies %>%
+ # filter(word == "it’s")
