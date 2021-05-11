@@ -84,11 +84,39 @@ trump_linegraph_words3$file <- gsub(".txt", "", trump_linegraph_words3$file)
 
 ```{r}
 biden_linegraph_words3 %>%
-  filter(word == "children") %>%
-  ggplot(aes(x = as.Date(file, "%m-%d-%y"), y = n)) + geom_line() + geom_point()
+  filter(word == "america") %>%
+  ggplot(aes(x = as.Date(file, "%m-%d-%y"), y = n)) + geom_line(color = "blue", size = 0.5) + geom_point(color = "blue") + labs(title = "Biden's use of the word 'America' over time.", x = "Date", y = "Word Frequency per Day") + theme_minimal()
 ```
 
+```{r}
+trump_linegraph_words3 %>%
+  filter(word == "america") %>%
+  ggplot(aes(x = as.Date(file, "%m-%d-%y"), y = n)) + geom_line(color = "red", size = 0.5) + geom_point(color = "red") + labs(title = "Trump's use of the word 'America' over time.", x = "Date", y = "Word Frequency per Day") + theme_minimal()
+```
 
+```{r}
+biden_linegraph_words3 %>%
+  filter(word == "president") %>%
+  ggplot(aes(x = as.Date(file, "%m-%d-%y"), y = n)) + geom_line(color = "blue", size = 0.5) + geom_point(color = "blue") + labs(title = "Biden's use of the word 'president' over time.", x = "Date", y = "Word Frequency per Day") + theme_minimal()
+```
+
+```{r}
+trump_linegraph_words3 %>%
+  filter(word == "president") %>%
+  ggplot(aes(x = as.Date(file, "%m-%d-%y"), y = n)) + geom_line(color = "red", size = 0.5) + geom_point(color = "red") + labs(title = "Trump's use of the word 'president' over time.", x = "Date", y = "Word Frequency per Day") + theme_minimal()
+```
+
+```{r}
+biden_linegraph_words3 %>%
+  filter(word == "virus") %>%
+  ggplot(aes(x = as.Date(file, "%m-%d-%y"), y = n)) + geom_line(color = "blue", size = 0.5) + geom_point(color = "blue") + labs(title = "Biden's use of the word 'virus' over time.", x = "Date", y = "Word Frequency per Day") + theme_minimal()
+```
+
+```{r}
+trump_linegraph_words3 %>%
+  filter(word == "virus") %>%
+  ggplot(aes(x = as.Date(file, "%m-%d-%y"), y = n)) + geom_line(color = "red", size = 0.5) + geom_point(color = "red") + labs(title = "Trump's use of the word 'virus' over time.", x = "Date", y = "Word Frequency per Day") + theme_minimal()
+```
 
 
 
