@@ -174,12 +174,14 @@ ggplot(data = ggnetwork(trump_network)
 ## Speech Analysis Over Time
 
 ```{r}
+#Reading in csv files
 biden_linegraph_words3 <- read_csv("biden_linegraph_data.csv")
 
 trump_linegraph_words3<- read_csv("trump_linegraph_data.csv")
 ```
 
 ```{r}
+#Linegraphs 1-2: Analysis of the word 'America' over time
 biden_linegraph_words3 %>%
   filter(word == "america") %>%
   ggplot(aes(x = as.Date(file, "%m-%d-%y"), y = n)) + 
@@ -196,6 +198,7 @@ x = "Date", y = "Word Frequency per Day") + theme_minimal()
 ```
 
 ```{r}
+#Linegraphs 3-4: Analysis of the word 'President' over time
 biden_linegraph_words3 %>%
   filter(word == "president") %>%
   ggplot(aes(x = as.Date(file, "%m-%d-%y"), y = n)) + 
@@ -212,6 +215,7 @@ x = "Date", y = "Word Frequency per Day") + theme_minimal()
 ```
 
 ```{r}
+#Linegraphs 5-6: Analysis of the word 'Virus' over time
 biden_linegraph_words3 %>%
   filter(word == "virus") %>%
   ggplot(aes(x = as.Date(file, "%m-%d-%y"), y = n)) + 
