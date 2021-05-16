@@ -17,9 +17,15 @@ library(igraph)
 
 # Introduction
 
+The United States presidential election is one of the most followed political events in the world. As such, there are many who study the data involved in the hopes of both making predictions and informing the public on the current state of the election. In this blog post, we analyze data from a key component of the election process: election 
+
 # Visualizations
 
 ## Network Visualizations
+
+### Text Mining
+
+Talk about Python here (and include non-runnable chunk)
 
 ### Text Data for Popular Election Topics:
 
@@ -151,8 +157,11 @@ ggplot(data = ggnetwork(trump_network)
   labs(size = "Relationship Strength")
 ```
 
+## Speech Analysis Over Time
 
-## Including links and images
+## Word Frequency Wordclouds
+
+## links and images
 
 You can include [Links](https://www.datadreaming.org/post/r-markdown-theme-gallery/) and images ![team logo](https://raw.githubusercontent.com/stat231-s21/Blog-Election-Pundits/main/images/s2g7-politics.jpg)
 
