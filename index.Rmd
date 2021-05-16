@@ -9,20 +9,25 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, fig.align="center")
+knitr::opts_chunk$set(echo = FALSE, message= FALSE, warning=FALSE, fig.align="center")
 library(tidyverse)
 library(ggnetwork)
 library(igraph)
 ```
 
-# Network Visualizations
+# Introduction
 
-Biden:
+# Visualizations
 
-```{r, echo=FALSE}
+## Network Visualizations
+
+### Text Data for Popular Election Topics:
+
+
+```{r, echo=FALSE, message=FALSE}
 biden_network_data <- read_csv("biden_speeches_network_data.csv") %>%
   arrange(desc(weight)) %>%
-  top_n(50)
+  top_n(16)
 
 biden_network <- graph_from_data_frame(biden_network_data, directed = FALSE)
 
@@ -42,19 +47,108 @@ stats <- stats %>%
 ggplot(data = ggnetwork(biden_network)
        , aes(x = x, y = y, xend = xend, yend = yend)) +
   geom_edges(arrow=arrow(type="closed", length=unit(6,"pt"))
-            , aes(color = weight),
-            size = 2) +
+            , color = "lightgray", aes(size = weight)) +
   geom_nodes() +
   geom_nodelabel(aes(label = name)) +
   theme_blank() +
-  ggtitle("Common Biden Speech Words") + 
-  labs(size = "Weight") +
-  scale_color_continuous(type = "viridis")
+  ggtitle("Topic Relationships in Biden's Speeches") + 
+  labs(size = "Relationship Strength")
 ```
 
-Trump:
 ```{r}
-trump_network_data <- read_csv("trump_speeches_network_data.csv")
+trump_network_data <- read_csv("trump_speeches_network_data.csv") %>%
+  arrange(desc(weight)) %>%
+  top_n(16)
+
+trump_network <- graph_from_data_frame(trump_network_data, directed = FALSE)
+
+V(trump_network)$degree <- igraph::degree(trump_network)
+V(trump_network)$wtdegree <- strength(biden_network, weights=E(biden_network)$Weight)
+
+stats <- data_frame(name = V(trump_network)$name,
+                   degree = V(trump_network)$degree,
+                   wtdegree = V(trump_network)$wtdegree )
+
+stats <- stats %>%
+  mutate(eigen = eigen_centrality(trump_network, directed = FALSE, 
+                                 weights = NA)$vector, 
+         page.rank = page_rank(trump_network, directed = FALSE, weights = NA)$vector
+         )
+
+ggplot(data = ggnetwork(trump_network)
+       , aes(x = x, y = y, xend = xend, yend = yend)) +
+  geom_edges(arrow=arrow(type="closed", length=unit(6,"pt"))
+            , color = "lightgray", aes(size = weight)) +
+  geom_nodes() +
+  geom_nodelabel(aes(label = name)) +
+  theme_blank() +
+  ggtitle("Topic Relationships in Trump's Speeches") + 
+  labs(size = "Relationship Strength")
+```
+
+### Generic Text Data
+
+```{r}
+biden_network_data <- read_csv("biden_speeches_network_data_no_topics.csv") %>%
+  arrange(desc(weight)) %>%
+  top_n(16) %>%
+  filter(!(word1 == "good" & word2 == "jobs") & !(word2 == "good" & word1 == "jobs"))
+
+biden_network <- graph_from_data_frame(biden_network_data, directed = FALSE)
+
+V(biden_network)$degree <- igraph::degree(biden_network)
+V(biden_network)$wtdegree <- strength(biden_network, weights=E(biden_network)$Weight)
+
+stats <- data_frame(name = V(biden_network)$name,
+                   degree = V(biden_network)$degree,
+                   wtdegree = V(biden_network)$wtdegree )
+
+stats <- stats %>%
+  mutate(eigen = eigen_centrality(biden_network, directed = FALSE, 
+                                 weights = NA)$vector, 
+         page.rank = page_rank(biden_network, directed = FALSE, weights = NA)$vector
+         )
+
+ggplot(data = ggnetwork(biden_network)
+       , aes(x = x, y = y, xend = xend, yend = yend)) +
+  geom_edges(arrow=arrow(type="closed", length=unit(6,"pt"))
+            , color = "lightgray", aes(size = weight)) +
+  geom_nodes() +
+  geom_nodelabel(aes(label = name)) +
+  theme_blank() +
+  ggtitle("Relationships Among Common Words in Biden's Speeches") + 
+  labs(size = "Relationship Strength")
+```
+
+```{r}
+trump_network_data <- read_csv("trump_speeches_network_data_no_topics.csv") %>%
+  arrange(desc(weight)) %>%
+  top_n(16)
+
+trump_network <- graph_from_data_frame(trump_network_data, directed = FALSE)
+
+V(trump_network)$degree <- igraph::degree(trump_network)
+V(trump_network)$wtdegree <- strength(biden_network, weights=E(biden_network)$Weight)
+
+stats <- data_frame(name = V(trump_network)$name,
+                   degree = V(trump_network)$degree,
+                   wtdegree = V(trump_network)$wtdegree )
+
+stats <- stats %>%
+  mutate(eigen = eigen_centrality(trump_network, directed = FALSE, 
+                                 weights = NA)$vector, 
+         page.rank = page_rank(trump_network, directed = FALSE, weights = NA)$vector
+         )
+
+ggplot(data = ggnetwork(trump_network)
+       , aes(x = x, y = y, xend = xend, yend = yend)) +
+  geom_edges(arrow=arrow(type="closed", length=unit(6,"pt"))
+            , color = "lightgray", aes(size = weight)) +
+  geom_nodes() +
+  geom_nodelabel(aes(label = name)) +
+  theme_blank() +
+  ggtitle("Relationships Among Common Words in Biden's Speeches") + 
+  labs(size = "Relationship Strength")
 ```
 
 

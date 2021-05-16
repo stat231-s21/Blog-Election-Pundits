@@ -9,8 +9,7 @@ from collections import defaultdict
 with open('stopwords.txt') as f:
     stopwords = set(f.read().splitlines())
 
-dist = 10
-num_words_considered = 40
+dist = 50
 
 output_files = ["biden_speeches", "trump_speeches"]
 
@@ -21,51 +20,53 @@ for output_file in output_files:
     os.chdir(output_file)
     input_files = os.listdir()
 
-    #first, compile a set of the words to consider
-    word_frequencies = defaultdict(lambda: 0)
+    topics_dict = dict()
+    topics_dict['covid'] = 'Covid'
+    topics_dict['virus'] = 'Covid'
+    topics_dict['coronavirus'] = 'Covid'
+    topics_dict['gun'] = 'Guns'
+    topics_dict['guns'] = 'Guns'
+    topics_dict['trade'] = 'Trade'
+    topics_dict['college'] = 'Education'
+    topics_dict['education'] = 'Education'
+    topics_dict['student'] = 'Education'
+    topics_dict['immigration'] = 'Immigration'
+    topics_dict['health'] = 'Health Care'
+    topics_dict['healthcare'] = 'Health Care'
+    topics_dict['climate'] = 'Climate Change'
+    topics_dict['environment'] = 'Climate Change'
+    topics_dict['abortion'] = 'Abortion'
+    topics_dict['economy'] = 'Economy'
+    topics_dict['iran'] = 'Iran'
+
+    frequencies = defaultdict(lambda: 0)
+
     for input_file in input_files:
         with open(input_file) as f:
             text = f.read()
-            
-        regex = re.compile('[^a-zA-Z\' ]')
-        text = regex.sub('', text)
-
-        words = text.split(" ")
-        for word in words:
-            word = word.lower()
-            if word not in stopwords and word != '':
-                word_frequencies[word] += 1
-
-    frequencies = [(num, word) for word, num in word_frequencies.items()]
-    frequencies.sort()
-    frequencies.reverse()
-    
-    top_words = set([word for num, word in frequencies[:num_words_considered]])
-
-    for input_file in input_files:
-        with open(input_file) as f:
-            text = f.read()
 
         regex = re.compile('[^a-zA-Z\' ]')
         text = regex.sub('', text)
 
-        words = text.split(" ")
+        words = re.split(' +|: |, |-|\. ', text)
         for i in range(len(words)):
             word = words[i].lower()
-            if word not in top_words:
+            if word not in topics_dict.keys():
                 continue
+
+            frequencies[topics_dict[word]] += 1
             
             # acquire nearby words
             nearby_words = []
             for j in range(i - dist, i + dist + 1): # check all j within `dist` of word
                 if j >= 0 and j < len(words) and j != i: # if j is a valid index
-                    if words[j] in top_words and words[j] != word:
+                    if words[j] in topics_dict.keys() and topics_dict[words[j]] != topics_dict[word]:
                         nearby_words.append(words[j])
 
             # increase weights accordingly
             for nearby_word in nearby_words:
                 # create hashable frozenset object
-                to_hash = frozenset([word, nearby_word])
+                to_hash = frozenset([topics_dict[word], topics_dict[nearby_word]])
                 output_dictionary[to_hash] += 1
 
     for pair_set in output_dictionary.keys():
