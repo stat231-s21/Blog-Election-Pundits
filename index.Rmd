@@ -17,82 +17,29 @@ library(igraph)
 
 # Introduction
 
-The United States presidential election is one of the most followed political events in the world. As such, there are many who study the data involved in the hopes of both making predictions and informing the public on the current state of the election. In this blog post, we analyze data from a key component of the election process: election 
+The United States presidential election is one of the most followed political events in the world. As such, there are many who study the data involved in the hopes of both making predictions and informing the public on the current state of the election. In this blog post, we analyze data from a key component of the election process: speeches given by the candidates. In particular, we analyze text from speeches given by Joe Biden and Donald Trump during the lead up to the 2020 election. Our primary questions we hoped to answer were:
+
+1. What are the most common words and phrases used by Trump and Biden? 
+2. What are the relationships between those words/phrases? 
+3. How did the frequency of these words/phrases change over time?
+
+# Data
+
+
 
 # Visualizations
 
+In order to address our three posed questions, we created three types of visualizations, one for each question. To identify the most frequent words used in their speeches, we created wordclouds with fontsize corresponding to word frequency. To identify relationships between the words, we created network graphs with edge sizes corresponding to "closeness" of these words within the documents. (We will define "closeness" in the network section). Lastly, we created line graphs to identify changes in word frequencies over time.
+
 ## Network Visualizations
+
+To understand the relationships between speech words, we looked at two types of words: the most common words across all speeches and popular election topics such as climate change, health care, and COVID-19. For each of these sets, we needed to define some metric for "closeness". To do this, we emulated an [analysis of Game of Thrones](https://networkofthrones.wordpress.com/). Specifically, we defined the closeness of two words (within the full dataset) as the number of times that the words occur within *d* words of each other in a single speech, where *d* is a parameter specifying this word distance.
 
 ### Text Mining
 
 Talk about Python here (and include non-runnable chunk)
 
-### Text Data for Popular Election Topics:
-
-
-```{r, echo=FALSE, message=FALSE}
-biden_network_data <- read_csv("biden_speeches_network_data.csv") %>%
-  arrange(desc(weight)) %>%
-  top_n(16)
-
-biden_network <- graph_from_data_frame(biden_network_data, directed = FALSE)
-
-V(biden_network)$degree <- igraph::degree(biden_network)
-V(biden_network)$wtdegree <- strength(biden_network, weights=E(biden_network)$Weight)
-
-stats <- data_frame(name = V(biden_network)$name,
-                   degree = V(biden_network)$degree,
-                   wtdegree = V(biden_network)$wtdegree )
-
-stats <- stats %>%
-  mutate(eigen = eigen_centrality(biden_network, directed = FALSE, 
-                                 weights = NA)$vector, 
-         page.rank = page_rank(biden_network, directed = FALSE, weights = NA)$vector
-         )
-
-ggplot(data = ggnetwork(biden_network)
-       , aes(x = x, y = y, xend = xend, yend = yend)) +
-  geom_edges(arrow=arrow(type="closed", length=unit(6,"pt"))
-            , color = "lightgray", aes(size = weight)) +
-  geom_nodes() +
-  geom_nodelabel(aes(label = name)) +
-  theme_blank() +
-  ggtitle("Topic Relationships in Biden's Speeches") + 
-  labs(size = "Relationship Strength")
-```
-
-```{r}
-trump_network_data <- read_csv("trump_speeches_network_data.csv") %>%
-  arrange(desc(weight)) %>%
-  top_n(16)
-
-trump_network <- graph_from_data_frame(trump_network_data, directed = FALSE)
-
-V(trump_network)$degree <- igraph::degree(trump_network)
-V(trump_network)$wtdegree <- strength(biden_network, weights=E(biden_network)$Weight)
-
-stats <- data_frame(name = V(trump_network)$name,
-                   degree = V(trump_network)$degree,
-                   wtdegree = V(trump_network)$wtdegree )
-
-stats <- stats %>%
-  mutate(eigen = eigen_centrality(trump_network, directed = FALSE, 
-                                 weights = NA)$vector, 
-         page.rank = page_rank(trump_network, directed = FALSE, weights = NA)$vector
-         )
-
-ggplot(data = ggnetwork(trump_network)
-       , aes(x = x, y = y, xend = xend, yend = yend)) +
-  geom_edges(arrow=arrow(type="closed", length=unit(6,"pt"))
-            , color = "lightgray", aes(size = weight)) +
-  geom_nodes() +
-  geom_nodelabel(aes(label = name)) +
-  theme_blank() +
-  ggtitle("Topic Relationships in Trump's Speeches") + 
-  labs(size = "Relationship Strength")
-```
-
-### Generic Text Data
+### Network Analysis for Most Commonly Used Words
 
 ```{r}
 biden_network_data <- read_csv("biden_speeches_network_data_no_topics.csv") %>%
@@ -154,6 +101,71 @@ ggplot(data = ggnetwork(trump_network)
   geom_nodelabel(aes(label = name)) +
   theme_blank() +
   ggtitle("Relationships Among Common Words in Biden's Speeches") + 
+  labs(size = "Relationship Strength")
+```
+
+### Network Analysis for Popular Election Topics:
+
+
+```{r, echo=FALSE, message=FALSE}
+biden_network_data <- read_csv("biden_speeches_network_data.csv") %>%
+  arrange(desc(weight)) %>%
+  top_n(16)
+
+biden_network <- graph_from_data_frame(biden_network_data, directed = FALSE)
+
+V(biden_network)$degree <- igraph::degree(biden_network)
+V(biden_network)$wtdegree <- strength(biden_network, weights=E(biden_network)$Weight)
+
+stats <- data_frame(name = V(biden_network)$name,
+                   degree = V(biden_network)$degree,
+                   wtdegree = V(biden_network)$wtdegree )
+
+stats <- stats %>%
+  mutate(eigen = eigen_centrality(biden_network, directed = FALSE, 
+                                 weights = NA)$vector, 
+         page.rank = page_rank(biden_network, directed = FALSE, weights = NA)$vector
+         )
+
+ggplot(data = ggnetwork(biden_network)
+       , aes(x = x, y = y, xend = xend, yend = yend)) +
+  geom_edges(arrow=arrow(type="closed", length=unit(6,"pt"))
+            , color = "lightgray", aes(size = weight)) +
+  geom_nodes() +
+  geom_nodelabel(aes(label = name)) +
+  theme_blank() +
+  ggtitle("Topic Relationships in Biden's Speeches") + 
+  labs(size = "Relationship Strength")
+```
+
+```{r}
+trump_network_data <- read_csv("trump_speeches_network_data.csv") %>%
+  arrange(desc(weight)) %>%
+  top_n(16)
+
+trump_network <- graph_from_data_frame(trump_network_data, directed = FALSE)
+
+V(trump_network)$degree <- igraph::degree(trump_network)
+V(trump_network)$wtdegree <- strength(biden_network, weights=E(biden_network)$Weight)
+
+stats <- data_frame(name = V(trump_network)$name,
+                   degree = V(trump_network)$degree,
+                   wtdegree = V(trump_network)$wtdegree )
+
+stats <- stats %>%
+  mutate(eigen = eigen_centrality(trump_network, directed = FALSE, 
+                                 weights = NA)$vector, 
+         page.rank = page_rank(trump_network, directed = FALSE, weights = NA)$vector
+         )
+
+ggplot(data = ggnetwork(trump_network)
+       , aes(x = x, y = y, xend = xend, yend = yend)) +
+  geom_edges(arrow=arrow(type="closed", length=unit(6,"pt"))
+            , color = "lightgray", aes(size = weight)) +
+  geom_nodes() +
+  geom_nodelabel(aes(label = name)) +
+  theme_blank() +
+  ggtitle("Topic Relationships in Trump's Speeches") + 
   labs(size = "Relationship Strength")
 ```
 
