@@ -161,6 +161,8 @@ ggplot(data = ggnetwork(trump_network)
 
 ## Word Frequency Wordclouds
 
+# Limitations, Pitfalls, and Future Research
+
 ## links and images
 
 You can include [Links](https://www.datadreaming.org/post/r-markdown-theme-gallery/) and images ![team logo](https://raw.githubusercontent.com/stat231-s21/Blog-Election-Pundits/main/images/s2g7-politics.jpg)
