@@ -286,6 +286,14 @@ trump_linegraph_words3 %>%
 geom_line(color = "red", size = 0.5) + geom_point(color = "red") + 
 labs(title = "Trump's use of the word 'America' over time.", 
 x = "Date", y = "Word Frequency per Day") + theme_minimal()
+
+#For the linegraphs, I converted our text files into two dataframes, 
+#one for Trump and one for Biden. I created variables to capture the 
+#word frequencies similarly to the Emily Dickinson wordcloud lab and 
+#then removed stopwords. After removing some extraneous text, I filtered
+#the words 'america', 'president', and 'virus', as shown above. I then
+#created six total linegraphs (three for each candidate) with the date
+#on the x-axis and frequency of each word on the y-axis.
 ```
 
 We can see that Biden's use of the word 'America' remains relatively consistent over the last stage of his campaigning. A noticeable outlier towards the end is in his victory speech in early 2021.
@@ -335,5 +343,7 @@ Trump and Biden both used the term 'virus' a similar amount during their public 
 # Limitations, Pitfalls, and Future Research
 
 There were a number of limitations with our analyses. Specifically for the network analysis, tuning the parameters always required compromise. The value for *d* was far from perfect, and in choosing it, we sometimes captured real connections, yet other times captured noisy/false connections. For example, presidents like to list topics in groups, even though these topics may be completely unrelated. When analyzing these topics, our text mining incorrectly establishes links. Moreover, we faced the challenge of choosing the correct number of edges to display. Too many edges results in a cluttered visualization, while too few results in missed information. In compromising, we accepted both of these problems to some degree.
+
+For the linegraphs, the speeches from Joe Biden available for scraping covered a larger timeframe than the speeches from Donald Trump. Even though it is around the same number of speeches for each candidate, it is possible the results could be different if we were to look at the same timeframe for both candidates. 
 
 While we feel like we adequately answered our specific questions, it's definitely hard to make inference outside of that with larger questions, like how their different speech patterns contributed to the 2020 election. One interesting idea for future research is to analyze sentiment in their text, to determine the tone of language used and how that could shift over time.
