@@ -15,6 +15,7 @@ library(ggnetwork)
 library(igraph)
 library(janitor)
 library(wordcloud2)
+library(wordcloud)
 library(tidytext)
 library(textdata)
 ```
@@ -86,7 +87,34 @@ dscore(trump_data)
 Joe Biden WordCloud
 ```{r}
 # calls the word cloud function to draw two word clouds
-dscore(biden_data)
+#dscore(biden_data)
+ # read in the data into speeches and remove missing rows.
+  speeches <- read_csv(biden_data) %>%
+    filter(text != "Missing")
+  
+  word_frequencies <- speeches %>%
+    unnest_tokens(output = word, input = text) %>%
+    anti_join(stop_words2, by="word") %>%
+    count(word, sort = TRUE)
+  
+  # choose color palette from color brewer
+pal <- brewer.pal(10, "Paired")
+
+wordcloud(word_frequencies$word, word_frequencies$n
+          , min.freq=100
+          , max.words=250
+          # plot the words in a random order
+          , random.order=T
+          # specify the range of the size of the words
+          , scale=c(5,0.5)
+          # specify proportion of words with 90 degree rotation
+          , rot.per=.15
+          # colors words from least to most frequent
+          , colors = pal
+          # font family
+          , family="sans")
+  #wordcloud(word_frequencies)
+
 ```
 
 
