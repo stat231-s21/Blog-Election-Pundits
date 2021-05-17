@@ -27,9 +27,9 @@ The United States presidential election is one of the most followed political ev
 2. What are the relationships between those words/phrases? 
 3. How did the frequency of these words/phrases change over time?
 
+We answer these questions through a series of visualizations which display results acquired via various techniques in text analysis.
+
 # Data
-
-
 
 # Visualizations
 
@@ -81,7 +81,6 @@ dscore(trump_data)
 dscore(biden_data)
 ```
 
-
 ## Network Visualizations
 
 To understand the relationships between speech words, we looked at two types of words: the most common words across all speeches and popular election topics such as climate change, health care, and COVID-19. For each of these sets, we needed to define some metric for "closeness". To do this, we emulated an [analysis of Game of Thrones](https://networkofthrones.wordpress.com/). Specifically, we defined the closeness of two words (within the full dataset) as the number of times that the words occur within *d* words of each other in a single speech, where *d* is a parameter specifying this word distance. For the first set of words (the most common words across all speeches), we chose *d* to be 10 (a relatively low value) since the words considered are more generic in nature (than the other set of words), and therefore a lower choice of *d* will pick up on more significant relationships. On the other hand, we chose *d* to be 50 for the popular election topics. Since the specific words involved in these topics occur much less frequently than the most common words, we needed to choose a larger value of *d* to capture these relationships.
@@ -96,7 +95,10 @@ Talk about Python here (and include non-runnable chunk)
 biden_network_data <- read_csv("biden_speeches_network_data_no_topics.csv") %>%
   arrange(desc(weight)) %>%
   top_n(16) %>%
-  filter(!(word1 == "good" & word2 == "jobs") & !(word2 == "good" & word1 == "jobs"))
+  filter(!(word1 == "public" & word2 == "health") & 
+         !(word1 == "health" & word2 == "public") &
+         !(word1 == "health" & word2 == "care") &
+         !(word1 == "care" & word2 == "health"))
 
 biden_network <- graph_from_data_frame(biden_network_data, directed = FALSE)
 
@@ -127,7 +129,9 @@ ggplot(data = ggnetwork(biden_network)
 ```{r}
 trump_network_data <- read_csv("trump_speeches_network_data_no_topics.csv") %>%
   arrange(desc(weight)) %>%
-  top_n(16)
+  top_n(16) %>%
+  filter(!(word1 == "hes" & word2 == "guy") & 
+         !(word1 == "guy" & word2 == "hes"))
 
 trump_network <- graph_from_data_frame(trump_network_data, directed = FALSE)
 
@@ -151,7 +155,7 @@ ggplot(data = ggnetwork(trump_network)
   geom_nodes() +
   geom_nodelabel(aes(label = name)) +
   theme_blank() +
-  ggtitle("Relationships Among Common Words in Biden's Speeches") + 
+  ggtitle("Relationships Among Common Words in Trump's Speeches") + 
   labs(size = "Relationship Strength")
 ```
 

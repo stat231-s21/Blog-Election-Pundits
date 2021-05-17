@@ -6,8 +6,11 @@ import re
 from collections import defaultdict
 
 # put stopwords into a dictionary
-with open('stopwords.txt') as f:
-    stopwords = set(f.read().splitlines())
+with open('stopwords2.csv') as f:
+    stopwords_text = f.read()
+    regex = re.compile('[\']')
+    stopwords_text = regex.sub('', stopwords_text)
+    stopwords = set(stopwords_text.splitlines()[1:])
 
 dist = 10
 num_words_considered = 40
