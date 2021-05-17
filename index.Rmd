@@ -269,7 +269,7 @@ biden_linegraph_words3 <- read_csv("biden_linegraph_data.csv")
 trump_linegraph_words3<- read_csv("trump_linegraph_data.csv")
 ```
 
-```{r}
+```{r, echo=TRUE}
 #Linegraphs 1-2: Analysis of the word 'America' over time
 biden_linegraph_words3 %>%
   filter(word == "america") %>%
