@@ -21,13 +21,13 @@ library(textdata)
 
 # Introduction
 
-The United States presidential election is one of the most followed political events in the world. As such, there are many who study the data involved in the hopes of both making predictions and informing the public on the current state of the election. In this blog post, we analyze data from a key component of the election process: speeches given by the candidates. In particular, we analyze text from speeches given by Joe Biden and Donald Trump during the lead up to the 2020 election. Our primary questions we hoped to answer were:
+The United States presidential election is one of the most followed political events in the world. As such, there are many who study the data involved in the hopes of both making predictions and informing the public on the current state of the election. In this blog post, we share our analysis of data from a key component of the election process: speeches given by the candidates. In particular, we analyzed text from speeches given by Joe Biden and Donald Trump during the lead up to the 2020 election. Our primary questions we hoped to answer were:
 
 1. What are the most common words and phrases used by Trump and Biden? 
 2. What are the relationships between those words/phrases? 
 3. How did the frequency of these words/phrases change over time?
 
-We answer these questions through a series of visualizations which display results acquired via various techniques in text analysis.
+We answered these questions through a series of visualizations which display results acquired via various techniques in text analysis.
 
 # Data
 
@@ -83,105 +83,64 @@ dscore(biden_data)
 
 ## Network Visualizations
 
-To understand the relationships between speech words, we looked at two types of words: the most common words across all speeches and popular election topics such as climate change, health care, and COVID-19. For each of these sets, we needed to define some metric for "closeness". To do this, we emulated an [analysis of Game of Thrones](https://networkofthrones.wordpress.com/). Specifically, we defined the closeness of two words (within the full dataset) as the number of times that the words occur within *d* words of each other in a single speech, where *d* is a parameter specifying this word distance. For the first set of words (the most common words across all speeches), we chose *d* to be 10 (a relatively low value) since the words considered are more generic in nature (than the other set of words), and therefore a lower choice of *d* will pick up on more significant relationships. On the other hand, we chose *d* to be 50 for the popular election topics. Since the specific words involved in these topics occur much less frequently than the most common words, we needed to choose a larger value of *d* to capture these relationships.
+To understand the relationships between speech words, we looked at two types of words: popular election topics such as climate change, health care, and COVID-19; and the most common words across all speeches. For each of these sets, we needed to define some metric for "closeness". To do this, we emulated an [analysis of Game of Thrones](https://networkofthrones.wordpress.com/). Specifically, we defined the closeness of two words (within the full dataset) as the number of times that the words occur within *d* words of each other in a single speech, where *d* is a parameter specifying this word distance. For the first set of words (the popular election topics), we chose *d* to be 50 (a relatively high value) since the words considered are more specific in nature (than the other set of words), and therefore a higher choice of *d* will provide us with enough data to observe significant relationships. On the other hand, we chose *d* to be 10 for the most common words. Since the words in this set occur much more frequently than the popular election topics, we needed to choose a smaller value of *d* to refine the selection and avoid noisy data.
 
 ### Text Mining
 
-Talk about Python here (and include non-runnable chunk)
+In order to mine the data in this way, we used Python over the speeches and words. For each speech, we iterated over all words, and for each relevant word, we collected relevant nearby words (those relevant words within *d* of the word being considered). Some sample code is provided:
 
-### Network Analysis for Most Commonly Used Words
+```{python, eval=FALSE, echo=TRUE}
+output = [] # each element is one line of the csv output
+output.append("word1,word2,weight") # csv header
+output_dictionary = defaultdict(lambda: 0) # maps frozenset (of two strings) to int
 
-```{r}
-biden_network_data <- read_csv("biden_speeches_network_data_no_topics.csv") %>%
-  arrange(desc(weight)) %>%
-  top_n(16) %>%
-  filter(!(word1 == "public" & word2 == "health") & 
-         !(word1 == "health" & word2 == "public") &
-         !(word1 == "health" & word2 == "care") &
-         !(word1 == "care" & word2 == "health"))
+for input_file in input_files: # these are the speeches
+  with open(input_file) as f:
+    text = f.read()
+    
+  regex = re.compile('[^a-zA-Z\' ]')
+  text = regex.sub('', text)
 
-biden_network <- graph_from_data_frame(biden_network_data, directed = FALSE)
+  words = text.split(" ")
+  for i in range(len(words)):
+    word = words[i].lower()
+    if word not in top_words: # top_words is the set of relevant words to be considered
+      continue
+          
+    # acquire nearby words
+    nearby_words = []
+    for j in range(i - dist, i + dist + 1): # check all j within `dist` of word
+      if j >= 0 and j < len(words) and j != i: # if j is a valid index
+        if words[j] in top_words and words[j] != word:
+          nearby_words.append(words[j])
 
-V(biden_network)$degree <- igraph::degree(biden_network)
-V(biden_network)$wtdegree <- strength(biden_network, weights=E(biden_network)$Weight)
+    # increase weights accordingly
+    for nearby_word in nearby_words:
+      # create hashable frozenset object
+      to_hash = frozenset([word, nearby_word])
+      output_dictionary[to_hash] += 1
 
-stats <- data_frame(name = V(biden_network)$name,
-                   degree = V(biden_network)$degree,
-                   wtdegree = V(biden_network)$wtdegree )
+  for pair_set in output_dictionary.keys():
+    pair_list = list(pair_set)
+    weight = output_dictionary[pair_set]
+    output.append(pair_list[0] + ',' + pair_list[1] + ',' + str(weight))
 
-stats <- stats %>%
-  mutate(eigen = eigen_centrality(biden_network, directed = FALSE, 
-                                 weights = NA)$vector, 
-         page.rank = page_rank(biden_network, directed = FALSE, weights = NA)$vector
-         )
-
-ggplot(data = ggnetwork(biden_network)
-       , aes(x = x, y = y, xend = xend, yend = yend)) +
-  geom_edges(arrow=arrow(type="closed", length=unit(6,"pt"))
-            , color = "lightgray", aes(size = weight)) +
-  geom_nodes() +
-  geom_nodelabel(aes(label = name)) +
-  theme_blank() +
-  ggtitle("Relationships Among Common Words in Biden's Speeches") + 
-  labs(size = "Relationship Strength")
+  output = '\n'.join(output)
 ```
 
-```{r}
-trump_network_data <- read_csv("trump_speeches_network_data_no_topics.csv") %>%
-  arrange(desc(weight)) %>%
-  top_n(16) %>%
-  filter(!(word1 == "hes" & word2 == "guy") & 
-         !(word1 == "guy" & word2 == "hes"))
-
-trump_network <- graph_from_data_frame(trump_network_data, directed = FALSE)
-
-V(trump_network)$degree <- igraph::degree(trump_network)
-V(trump_network)$wtdegree <- strength(biden_network, weights=E(biden_network)$Weight)
-
-stats <- data_frame(name = V(trump_network)$name,
-                   degree = V(trump_network)$degree,
-                   wtdegree = V(trump_network)$wtdegree )
-
-stats <- stats %>%
-  mutate(eigen = eigen_centrality(trump_network, directed = FALSE, 
-                                 weights = NA)$vector, 
-         page.rank = page_rank(trump_network, directed = FALSE, weights = NA)$vector
-         )
-
-ggplot(data = ggnetwork(trump_network)
-       , aes(x = x, y = y, xend = xend, yend = yend)) +
-  geom_edges(arrow=arrow(type="closed", length=unit(6,"pt"))
-            , color = "lightgray", aes(size = weight)) +
-  geom_nodes() +
-  geom_nodelabel(aes(label = name)) +
-  theme_blank() +
-  ggtitle("Relationships Among Common Words in Trump's Speeches") + 
-  labs(size = "Relationship Strength")
-```
+Note that we actually double count connections between words, but it doesn't matter for our purposes because we double count *all* connections, so in comparing these relationships there is no observable difference.
 
 ### Network Analysis for Popular Election Topics:
 
+Once the data was extracted, we used R's `igraph` and `ggnetwork` to display the networks. Our first set of networks focuses on references to popular election topics we found on [usnews.com](https://www.usnews.com/news/elections). We mined the text as described above, and then displayed our results in R. We provide code for our first network:
 
-```{r, echo=FALSE, message=FALSE}
+```{r, echo=TRUE, message=FALSE}
 biden_network_data <- read_csv("biden_speeches_network_data.csv") %>%
   arrange(desc(weight)) %>%
   top_n(16)
 
 biden_network <- graph_from_data_frame(biden_network_data, directed = FALSE)
 
-V(biden_network)$degree <- igraph::degree(biden_network)
-V(biden_network)$wtdegree <- strength(biden_network, weights=E(biden_network)$Weight)
-
-stats <- data_frame(name = V(biden_network)$name,
-                   degree = V(biden_network)$degree,
-                   wtdegree = V(biden_network)$wtdegree )
-
-stats <- stats %>%
-  mutate(eigen = eigen_centrality(biden_network, directed = FALSE, 
-                                 weights = NA)$vector, 
-         page.rank = page_rank(biden_network, directed = FALSE, weights = NA)$vector
-         )
-
 ggplot(data = ggnetwork(biden_network)
        , aes(x = x, y = y, xend = xend, yend = yend)) +
   geom_edges(arrow=arrow(type="closed", length=unit(6,"pt"))
@@ -189,8 +148,8 @@ ggplot(data = ggnetwork(biden_network)
   geom_nodes() +
   geom_nodelabel(aes(label = name)) +
   theme_blank() +
-  ggtitle("Topic Relationships in Biden's Speeches") + 
-  labs(size = "Relationship Strength")
+  theme(legend.position = "none") +
+  ggtitle("Topic Relationships in Biden's Speeches")
 ```
 
 ```{r}
@@ -220,9 +179,59 @@ ggplot(data = ggnetwork(trump_network)
   geom_nodes() +
   geom_nodelabel(aes(label = name)) +
   theme_blank() +
-  ggtitle("Topic Relationships in Trump's Speeches") + 
-  labs(size = "Relationship Strength")
+  theme(legend.position = "none")
+  ggtitle("Topic Relationships in Trump's Speeches")
 ```
+
+One interesting takeaway from these visualizations is the more focused quality of Biden's speeches. While Trump frequently references guns, trade, and Iran in the context of other topics, Biden does not do this as much. A second observation is that both candidates connect similar main topics, including heath care, education, COVID-19, and the economy. For Biden, climate change is one of these topics. (This is not the case for Trump).
+
+### Network Analysis for Most Commonly Used Words
+
+Our second set of networks focuses on the most commonly used words across all speeches. The same procedure was used as above.
+
+```{r}
+biden_network_data <- read_csv("biden_speeches_network_data_no_topics.csv") %>%
+  arrange(desc(weight)) %>%
+  top_n(16) %>%
+  filter(!(word1 == "public" & word2 == "health") & 
+         !(word1 == "health" & word2 == "public") &
+         !(word1 == "health" & word2 == "care") &
+         !(word1 == "care" & word2 == "health"))
+
+biden_network <- graph_from_data_frame(biden_network_data, directed = FALSE)
+
+ggplot(data = ggnetwork(biden_network)
+       , aes(x = x, y = y, xend = xend, yend = yend)) +
+  geom_edges(arrow=arrow(type="closed", length=unit(6,"pt"))
+            , color = "lightgray", aes(size = weight)) +
+  geom_nodes() +
+  geom_nodelabel(aes(label = name)) +
+  theme_blank() +
+  theme(legend.position = "none") +
+  ggtitle("Relationships Among Common Words in Biden's Speeches")
+```
+
+```{r}
+trump_network_data <- read_csv("trump_speeches_network_data_no_topics.csv") %>%
+  arrange(desc(weight)) %>%
+  top_n(16) %>%
+  filter(!(word1 == "hes" & word2 == "guy") & 
+         !(word1 == "guy" & word2 == "hes"))
+
+trump_network <- graph_from_data_frame(trump_network_data, directed = FALSE)
+
+ggplot(data = ggnetwork(trump_network)
+       , aes(x = x, y = y, xend = xend, yend = yend)) +
+  geom_edges(arrow=arrow(type="closed", length=unit(6,"pt"))
+            , color = "lightgray", aes(size = weight)) +
+  geom_nodes() +
+  geom_nodelabel(aes(label = name)) +
+  theme_blank() +
+  theme(legend.position = "none") +
+  ggtitle("Relationships Among Common Words in Trump's Speeches")
+```
+
+One observation from these networks is how central the word 'people' is to both candidates' speeches. This is the most commonly used word by both candidates, and therefore it makes sense for it to be central in these networks. Furthermore, Biden's use of commmon words is more focused, with nearly all of the strongest edges containing the word 'people'. Trump's use of these words, on the other hand, is more spread out.
 
 ## Speech Analysis Over Time
 
