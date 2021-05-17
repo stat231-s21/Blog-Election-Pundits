@@ -330,13 +330,6 @@ x = "Date", y = "Word Frequency per Day") + theme_minimal()
 
 # Limitations, Pitfalls, and Future Research
 
+There were a number of limitations with our analyses. Specifically for the network analysis, tuning the parameters always required compromise. The value for *d* was far from perfect, and in choosing it, we sometimes captured real connections, yet other times captured noisy/false connections. For example, presidents like to list topics in groups, even though these topics may be completely unrelated. When analyzing these topics, our text mining incorrectly establishes links. Moreover, we faced the challenge of choosing the correct number of edges to display. Too many edges results in a cluttered visualization, while too few results in missed information. In compromising, we accept both of these problems to some degree.
+
 While we feel like we adequately answered our specific questions, it's definitely hard to make inference outside of that with larger questions, like how their different speech patterns contributed to the 2020 election. One interesting idea for future research is to analyze sentiment in their text, to determine the tone of language used and how that could shift over time.
-
-## links and images
-
-You can include [Links](https://www.datadreaming.org/post/r-markdown-theme-gallery/) and images ![team logo](https://raw.githubusercontent.com/stat231-s21/Blog-Election-Pundits/main/images/s2g7-politics.jpg)
-
-You can embed a gif.
-
-![pugs](https://media.giphy.com/media/XHVmD4RyXgSjd8aUMb/giphy.gif)
-
