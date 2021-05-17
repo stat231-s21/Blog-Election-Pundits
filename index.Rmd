@@ -36,6 +36,7 @@ The United States presidential election is one of the most followed political ev
 In order to address our three posed questions, we created three types of visualizations, one for each question. To identify the most frequent words used in their speeches, we created wordclouds with fontsize corresponding to word frequency. To identify relationships between the words, we created network graphs with edge sizes corresponding to "closeness" of these words within the documents. (We will define "closeness" in the network section). Lastly, we created line graphs to identify changes in word frequencies over time.
 
 ## Word Frequency Wordclouds
+The word cloud is used to highlight the frequently used words in both Donald Trump and Joe Biden's speeches. We made used of stop words to remove words that are frequently used but provide little information. Some common English stop words include "I", "she'll", "the", etc. We created a vector to add our own stop words into the built in stopwords dataframe. By analyzing the most frequent words used by the two candidates we can get a better insight into the main issues the two candidates hope to solve or their main policies. For example, a frequent word used by Joe Biden is covid because one of Joe Biden's main campaign policies was the eradication of the virus in the US and China was one of Trump's frequently used words because China is the US's foreign trade rival.
 
 ```{r}
 # reading in the speech data
