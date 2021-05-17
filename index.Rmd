@@ -30,6 +30,8 @@ The United States presidential election is one of the most followed political ev
 
 We answered these questions through a series of visualizations which display results which we acquired via techniques in text analysis.
 
+![trump/biden](https://specials-images.forbesimg.com/imageserve/5fa0765561e6bb9359bb8b67/0x0.jpg?fit=scale)
+
 # Data
 
 We acquired our data from [rev.com](https://www.rev.com/blog/transcript-category/donald-trump-transcripts), a site which contains transcripts from all Trump and Biden speeches during the 2020 presidential election cycle. We compiled a list of urls for the different speeches and then iterated over them, opening each page and scraping the speech into a text file. We also used Python to clean up the text files and remove words from the transcripts which were not actually in the speeches.
