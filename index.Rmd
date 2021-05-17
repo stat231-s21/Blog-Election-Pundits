@@ -28,9 +28,11 @@ The United States presidential election is one of the most followed political ev
 2. What are the relationships between those words/phrases? 
 3. How did the frequency of these words/phrases change over time?
 
-We answered these questions through a series of visualizations which display results acquired via various techniques in text analysis.
+We answered these questions through a series of visualizations which display results which we acquired via techniques in text analysis.
 
 # Data
+
+We acquired our data from [rev.com](https://www.rev.com/blog/transcript-category/donald-trump-transcripts), a site which contains transcripts from all Trump and Biden speeches during the 2020 presidential election cycle. We compiled a list of urls for the different speeches and then iterated over them, opening each page and scraping the speech into a text file. We also used Python to clean up the text files and remove words from the transcripts which were not actually in the speeches.
 
 # Visualizations
 
@@ -282,11 +284,11 @@ trump_linegraph_words3 %>%
 geom_line(color = "red", size = 0.5) + geom_point(color = "red") + 
 labs(title = "Trump's use of the word 'America' over time.", 
 x = "Date", y = "Word Frequency per Day") + theme_minimal()
-
-#We can see that Biden's use of the word 'America' remains relatively consistent over the last stage of his campaigning. A noticeable outlier towards the end is in his victory speech in early 2021.
-
-#We can also see that Trump used the word 'America' a similar amount that Biden did during his campaigning. However, we can see a noticeable decrease corresponding with when Joe Biden defeated him in the general election.
 ```
+
+We can see that Biden's use of the word 'America' remains relatively consistent over the last stage of his campaigning. A noticeable outlier towards the end is in his victory speech in early 2021.
+
+We can also see that Trump used the word 'America' a similar amount that Biden did during his campaigning. However, we can see a noticeable decrease corresponding with when Joe Biden defeated him in the general election.
 
 ```{r}
 #Linegraphs 3-4: Analysis of the word 'President' over time
@@ -303,11 +305,11 @@ trump_linegraph_words3 %>%
 geom_line(color = "red", size = 0.5) + geom_point(color = "red") + 
 labs(title = "Trump's use of the word 'president' over time.", 
 x = "Date", y = "Word Frequency per Day") + theme_minimal()
-
-#Biden used the word 'president' a similar amount of times, and again we see a noticeable outlier corresponding with his victory speech.
-
-#There is not a statistically significant difference between the amount of times Biden and Trump used the word 'president'. As before though, we see this drops off somewhat after the general election.
 ```
+
+Biden used the word 'president' a similar amount of times, and again we see a noticeable outlier corresponding with his victory speech.
+
+There is not a statistically significant difference between the amount of times Biden and Trump used the word 'president'. As before though, we see this drops off somewhat after the general election.
 
 ```{r}
 #Linegraphs 5-6: Analysis of the word 'Virus' over time
@@ -324,9 +326,9 @@ trump_linegraph_words3 %>%
 geom_line(color = "red", size = 0.5) + geom_point(color = "red") + 
 labs(title = "Trump's use of the word 'virus' over time.", 
 x = "Date", y = "Word Frequency per Day") + theme_minimal()
-
-#Trump and Biden both used the term 'virus' a similar amount during their public appearances. We see Biden mentioned it a lot during the start of the Covid-19 pandemic, and again during his victory speech. Again, Trump mentioned it fairly consistently, until his defeat by Biden at which point he would rarely talk about it.
 ```
+
+Trump and Biden both used the term 'virus' a similar amount during their public appearances. We see Biden mentioned it a lot during the start of the Covid-19 pandemic, and again during his victory speech. Again, Trump mentioned it fairly consistently, until his defeat by Biden at which point he would rarely talk about it.
 
 # Limitations, Pitfalls, and Future Research
 
