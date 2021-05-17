@@ -243,7 +243,7 @@ x = "Date", y = "Word Frequency per Day") + theme_minimal()
 
 # Limitations, Pitfalls, and Future Research
 
-
+While we feel like we adequately answered our specific questions, it's definitely hard to make inference outside of that with larger questions, like how their different speech patterns contributed to the 2020 election. One interesting idea for future research is to analyze sentiment in their text, to determine the tone of language used and how that could shift over time.
 
 ## links and images
 
