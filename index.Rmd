@@ -98,7 +98,7 @@ Joe Biden WordCloud
     count(word, sort = TRUE)
   
   # choose color palette from color brewer
-pal <- brewer.pal(10, "Paired")
+pal <- brewer.pal(13, "Paired")
 
 wordcloud(word_frequencies$word, word_frequencies$n
           , min.freq=100
@@ -106,7 +106,7 @@ wordcloud(word_frequencies$word, word_frequencies$n
           # plot the words in a random order
           , random.order=T
           # specify the range of the size of the words
-          , scale=c(5,0.5)
+          , scale=c(3,0.3)
           # specify proportion of words with 90 degree rotation
           , rot.per=.15
           # colors words from least to most frequent
