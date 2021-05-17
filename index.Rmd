@@ -49,7 +49,7 @@ trump_data <- "trump_speeches/trump_speeches_wordcloud.csv"
 biden_data <- "biden_speeches/biden_speeches_wordcloud.csv"
 ```
 
-```{r}
+```{r, echo=TRUE, message=FALSE}
 # Create a list of custom stopwords that should be added
 word <- c("i’ve", "it’s", "i’m", "he’s", "let’s",
           "won’t", "we’re", "you’re", "that’s","we’ve", "don’t", "you’ve")
@@ -65,7 +65,7 @@ stop_words2 <-  dplyr::bind_rows(stop_words, mystopwords) %>%
 ```
 
 
-```{r}
+```{r, echo=TRUE, message=FALSE}
 # function to draw word cloud
 dscore<-function(data){
   # read in the data into speeches and remove missing rows.
@@ -110,7 +110,7 @@ wordcloud(word_frequencies$word, word_frequencies$n
           # plot the words in a random order
           , random.order=T
           # specify the range of the size of the words
-          , scale=c(3,0.3)
+          , scale=c(5,0.3)
           # specify proportion of words with 90 degree rotation
           , rot.per=.15
           # colors words from least to most frequent
@@ -343,6 +343,8 @@ Trump and Biden both used the term 'virus' a similar amount during their public 
 # Limitations, Pitfalls, and Future Research
 
 There were a number of limitations with our analyses. Specifically for the network analysis, tuning the parameters always required compromise. The value for *d* was far from perfect, and in choosing it, we sometimes captured real connections, yet other times captured noisy/false connections. For example, presidents like to list topics in groups, even though these topics may be completely unrelated. When analyzing these topics, our text mining incorrectly establishes links. Moreover, we faced the challenge of choosing the correct number of edges to display. Too many edges results in a cluttered visualization, while too few results in missed information. In compromising, we accepted both of these problems to some degree.
+
+The main limitation of the wordcloud is that is gives more emphasis to longer words over short words, therefore distorting the true frequency of the words since the longer words with more emphasis seem more frequent. As shown in the second wordcloud of Joe Biden, word clouds become inefficient when the word frequencies are less varied. Therefore, the Joe Biden wordcloud seems to have the same blue color for most of the words since the words are colored by frequency.
 
 For the linegraphs, the speeches from Joe Biden available for scraping covered a larger timeframe than the speeches from Donald Trump. Even though it is around the same number of speeches for each candidate, it is possible the results could be different if we were to look at the same timeframe for both candidates. 
 
