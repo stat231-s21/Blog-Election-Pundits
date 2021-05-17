@@ -75,11 +75,21 @@ dscore<-function(data){
   wordcloud2(word_frequencies, shape = "star")
 
 }
+```
 
+Donald Trump WordCloud
+```{r}
 # calls the word cloud function to draw two word clouds
 dscore(trump_data)
+```
+
+Joe Biden WordCloud
+```{r}
+# calls the word cloud function to draw two word clouds
 dscore(biden_data)
 ```
+
+
 
 ## Network Visualizations
 
