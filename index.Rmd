@@ -159,19 +159,6 @@ trump_network_data <- read_csv("trump_speeches_network_data.csv") %>%
 
 trump_network <- graph_from_data_frame(trump_network_data, directed = FALSE)
 
-V(trump_network)$degree <- igraph::degree(trump_network)
-V(trump_network)$wtdegree <- strength(biden_network, weights=E(biden_network)$Weight)
-
-stats <- data_frame(name = V(trump_network)$name,
-                   degree = V(trump_network)$degree,
-                   wtdegree = V(trump_network)$wtdegree )
-
-stats <- stats %>%
-  mutate(eigen = eigen_centrality(trump_network, directed = FALSE, 
-                                 weights = NA)$vector, 
-         page.rank = page_rank(trump_network, directed = FALSE, weights = NA)$vector
-         )
-
 ggplot(data = ggnetwork(trump_network)
        , aes(x = x, y = y, xend = xend, yend = yend)) +
   geom_edges(arrow=arrow(type="closed", length=unit(6,"pt"))
@@ -179,7 +166,7 @@ ggplot(data = ggnetwork(trump_network)
   geom_nodes() +
   geom_nodelabel(aes(label = name)) +
   theme_blank() +
-  theme(legend.position = "none")
+  theme(legend.position = "none") +
   ggtitle("Topic Relationships in Trump's Speeches")
 ```
 
